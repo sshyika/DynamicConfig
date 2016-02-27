@@ -3,6 +3,7 @@ package com.loopme.config.provider.test;
 import com.loopme.config.api.Configuration;
 import org.junit.Test;
 import org.springframework.context.ApplicationContext;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 import static org.junit.Assert.assertEquals;

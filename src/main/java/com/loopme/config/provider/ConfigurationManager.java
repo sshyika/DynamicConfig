@@ -4,22 +4,30 @@ import com.loopme.config.api.Configurable;
 import com.loopme.config.api.Configuration;
 import com.loopme.config.provider.source.ConfigurationSource;
 import com.loopme.config.provider.source.Listener;
+import org.springframework.aop.framework.ProxyFactory;
+import org.springframework.aop.target.HotSwappableTargetSource;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.config.BeanPostProcessor;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
+import org.springframework.context.ApplicationListener;
+import org.springframework.context.event.ContextRefreshedEvent;
+import org.springframework.context.event.ContextStartedEvent;
 
+import java.lang.reflect.ParameterizedType;
 import java.util.*;
 
-public class ConfigurationManager implements Listener, BeanPostProcessor, ApplicationContextAware{
+public class ConfigurationManager implements Listener, BeanPostProcessor, ApplicationContextAware {
 
-    private Map<Class, Set<String>> configurables;
-    private Map<Class, Pair<Configuration>> configs;
+    private Map<Class<? extends Configuration>, Set<String>> configurables;
+    private Map<Class<? extends Configuration>, Pair<Configuration>> configs;
+    private Map<String, HotSwappableTargetSource> swappers;
     private ApplicationContext applicationContext;
 
 
     public ConfigurationManager(List<ConfigurationSource> sources) {
         configurables = new HashMap<>();
+        swappers = new HashMap<>();
         configs = new HashMap<>(sources.size());
         initConfigs(sources);
     }
@@ -27,11 +35,13 @@ public class ConfigurationManager implements Listener, BeanPostProcessor, Applic
 
     @Override
     public synchronized void onUpdate(Configuration fresh) {
-        Class configType = fresh.getClass();
+        Class<? extends Configuration> configType = fresh.getClass();
         Pair<Configuration> config = configs.get(configType);
         configs.put(configType, new Pair<>(config.fresh, fresh));
         for (String name : configurables.get(configType)) {
-            applicationContext.getBean(name, Configurable.class);
+            Configurable bean = applicationContext.getBean(name, Configurable.class);
+            Object old = swappers.get(name).swap(bean);
+            // TODO: destroy old instance
         }
     }
 
@@ -39,7 +49,7 @@ public class ConfigurationManager implements Listener, BeanPostProcessor, Applic
     public Object postProcessAfterInitialization(Object bean, String name) throws BeansException {
         if (bean instanceof Configurable) {
             Configurable configurable = (Configurable)bean;
-            Class configType = configurable.getConfigType();
+            Class<? extends Configuration> configType = configurable.getConfigType();
             Set<String> dependents = configurables.get(configType);
             if (dependents == null) {
                 dependents = new HashSet<>();
@@ -51,8 +61,7 @@ public class ConfigurationManager implements Listener, BeanPostProcessor, Applic
                 throw new IllegalStateException("ConfigurationSource for " + configType + " is not found");
             }
             configurable.update(config.old, config.fresh);
-            ConfigurableInterceptor.accept(configurable);
-            return new ConfigurablePlaceholder(configurable.getClass());
+            return proxy(name, configurable);
         }
         return bean;
     }
@@ -67,6 +76,16 @@ public class ConfigurationManager implements Listener, BeanPostProcessor, Applic
         this.applicationContext = applicationContext;
     }
 
+
+    private Object proxy(String name, Configurable bean) {
+        if (!swappers.containsKey(name)) {
+            HotSwappableTargetSource swapper = new HotSwappableTargetSource(bean);
+            swappers.put(name, swapper);
+            return ProxyFactory.getProxy(swapper);
+        } else {
+            return bean;
+        }
+    }
 
     private void initConfigs(List<ConfigurationSource> sources) {
         Set<Class> sourcesSet = new HashSet<>(sources.size());
