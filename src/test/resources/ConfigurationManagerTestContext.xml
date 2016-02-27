@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+    <bean id="configA" class="com.loopme.config.provider.test.ConfigurationManagerTest$ConfigA"/>
+    <bean id="configB" class="com.loopme.config.provider.test.ConfigurationManagerTest$ConfigB"/>
+
+    <bean id="configurableA" class="com.loopme.config.provider.test.ConfigurationManagerTest$ConfigurableA" scope="prototype"/>
+    <bean id="configurableB" class="com.loopme.config.provider.test.ConfigurationManagerTest$ConfigurableB" scope="prototype"/>
+
+    <bean id="sourceA" class="com.loopme.config.provider.test.TestConfigurationSource">
+        <constructor-arg ref="configA"/>
+    </bean>
+
+    <bean id="sourceB" class="com.loopme.config.provider.test.TestConfigurationSource">
+        <constructor-arg ref="configB"/>
+    </bean>
+
+    <bean class="com.loopme.config.provider.ConfigurationManager">
+        <constructor-arg>
+            <list>
+                <ref bean="sourceA"/>
+                <ref bean="sourceB"/>
+            </list>
+        </constructor-arg>
+    </bean>
+
+</beans>
