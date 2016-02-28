@@ -19,10 +19,13 @@ public class ConfigurationManager implements Listener, BeanPostProcessor, Applic
     private Map<Class<? extends Configuration>, Set<String>> configurables;
     private Map<Class<? extends Configuration>, Configuration> configs;
     private Map<String, HotSwappableTargetSource> swappers;
+
+    private Disposer disposer;
     private ApplicationContext applicationContext;
 
 
-    public ConfigurationManager(List<ConfigurationSource> sources) {
+    public ConfigurationManager(Disposer disposer, List<ConfigurationSource> sources) {
+        this.disposer = disposer;
         configurables = new HashMap<>();
         swappers = new HashMap<>();
         configs = new HashMap<>(sources.size());
@@ -37,7 +40,7 @@ public class ConfigurationManager implements Listener, BeanPostProcessor, Applic
         for (String name : configurables.get(configType)) {
             Configurable bean = applicationContext.getBean(name, Configurable.class);
             Object old = swappers.get(name).swap(bean);
-            // TODO: destroy old instance
+            disposer.dispose(name, (Configurable)old);
         }
     }
 

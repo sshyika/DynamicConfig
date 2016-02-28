@@ -17,7 +17,10 @@
         <constructor-arg ref="configB"/>
     </bean>
 
+    <bean id="disposer" class="com.loopme.config.provider.Disposer"/>
+
     <bean class="com.loopme.config.provider.ConfigurationManager">
+        <constructor-arg ref="disposer"/>
         <constructor-arg>
             <list>
                 <ref bean="sourceA"/>
