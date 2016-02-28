@@ -3,6 +3,8 @@
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
 
+    <import resource="config-context.xml"/>
+
     <bean id="configA" class="com.loopme.config.provider.test.ConfigurationManagerTest$ConfigA"/>
     <bean id="configB" class="com.loopme.config.provider.test.ConfigurationManagerTest$ConfigB"/>
 
@@ -15,18 +17,6 @@
 
     <bean id="sourceB" class="com.loopme.config.provider.test.TestConfigurationSource">
         <constructor-arg ref="configB"/>
-    </bean>
-
-    <bean id="disposer" class="com.loopme.config.provider.Disposer"/>
-
-    <bean class="com.loopme.config.provider.ConfigurationManager">
-        <constructor-arg ref="disposer"/>
-        <constructor-arg>
-            <list>
-                <ref bean="sourceA"/>
-                <ref bean="sourceB"/>
-            </list>
-        </constructor-arg>
     </bean>
 
 </beans>

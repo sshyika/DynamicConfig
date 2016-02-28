@@ -16,20 +16,20 @@ import java.util.*;
 
 public class ConfigurationManager implements Listener, BeanPostProcessor, ApplicationContextAware {
 
-    private Map<Class<? extends Configuration>, Set<String>> configurables;
-    private Map<Class<? extends Configuration>, Configuration> configs;
-    private Map<String, HotSwappableTargetSource> swappers;
+    private Map<Class<? extends Configuration>, Set<String>> configurables = new HashMap<>();
+    private Map<Class<? extends Configuration>, Configuration> configs = new HashMap<>();
+    private Map<String, HotSwappableTargetSource> swappers = new HashMap<>();
 
     private Disposer disposer;
     private ApplicationContext applicationContext;
 
 
-    public ConfigurationManager(Disposer disposer, List<ConfigurationSource> sources) {
+    public ConfigurationManager(Disposer disposer) {
         this.disposer = disposer;
-        configurables = new HashMap<>();
-        swappers = new HashMap<>();
-        configs = new HashMap<>(sources.size());
-        initConfigs(sources);
+    }
+
+    public void init() {
+        initConfigs(applicationContext.getBeansOfType(ConfigurationSource.class).values());
     }
 
 
@@ -91,7 +91,7 @@ public class ConfigurationManager implements Listener, BeanPostProcessor, Applic
         return (Class<? extends Configuration>)GenericTypeReflector.getTypeParameter(object.getClass(), Configurable.class.getTypeParameters()[0]);
     }
 
-    private void initConfigs(List<ConfigurationSource> sources) {
+    private void initConfigs(Collection<ConfigurationSource> sources) {
         Set<Class> sourcesSet = new HashSet<>(sources.size());
 
         for (ConfigurationSource source : sources) {
