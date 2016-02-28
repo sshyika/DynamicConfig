@@ -14,7 +14,7 @@ abstract class TestConfigurable<T extends Configuration> implements Configurable
     private T fresh;
 
     @Override
-    public void update(Optional<T> old, T fresh) {
+    public void accept(Optional<T> old, T fresh) {
         this.old = old;
         this.fresh = fresh;
     }

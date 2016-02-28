@@ -55,17 +55,9 @@ public class ConfigurationManagerTest {
     }
 
     public static class ConfigurableA extends TestConfigurable<ConfigA> {
-        @Override
-        public Class<ConfigA> getConfigType() {
-            return ConfigA.class;
-        }
     }
 
     public static class ConfigurableB extends TestConfigurable<ConfigB> {
-        @Override
-        public Class<ConfigB> getConfigType() {
-            return ConfigB.class;
-        }
     }
 
 }

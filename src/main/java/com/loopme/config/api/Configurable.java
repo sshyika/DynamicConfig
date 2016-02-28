@@ -4,8 +4,6 @@ import java.util.Optional;
 
 public interface Configurable<T extends Configuration> {
 
-    void update(Optional<T> old, T fresh);
-
-    Class<T> getConfigType();
+    void accept(Optional<T> old, T fresh);
 
 }

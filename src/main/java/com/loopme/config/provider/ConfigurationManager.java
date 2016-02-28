@@ -1,5 +1,6 @@
 package com.loopme.config.provider;
 
+import com.googlecode.gentyref.GenericTypeReflector;
 import com.loopme.config.api.Configurable;
 import com.loopme.config.api.Configuration;
 import com.loopme.config.provider.source.ConfigurationSource;
@@ -10,11 +11,7 @@ import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.config.BeanPostProcessor;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
-import org.springframework.context.ApplicationListener;
-import org.springframework.context.event.ContextRefreshedEvent;
-import org.springframework.context.event.ContextStartedEvent;
 
-import java.lang.reflect.ParameterizedType;
 import java.util.*;
 
 public class ConfigurationManager implements Listener, BeanPostProcessor, ApplicationContextAware {
@@ -49,7 +46,7 @@ public class ConfigurationManager implements Listener, BeanPostProcessor, Applic
     public Object postProcessAfterInitialization(Object bean, String name) throws BeansException {
         if (bean instanceof Configurable) {
             Configurable configurable = (Configurable)bean;
-            Class<? extends Configuration> configType = configurable.getConfigType();
+            Class<? extends Configuration> configType = getConfigType(configurable);
             Set<String> dependents = configurables.get(configType);
             if (dependents == null) {
                 dependents = new HashSet<>();
@@ -60,7 +57,7 @@ public class ConfigurationManager implements Listener, BeanPostProcessor, Applic
             if (config == null) {
                 throw new IllegalStateException("ConfigurationSource for " + configType + " is not found");
             }
-            configurable.update(config.old, config.fresh);
+            configurable.accept(config.old, config.fresh);
             return proxy(name, configurable);
         }
         return bean;
@@ -85,6 +82,11 @@ public class ConfigurationManager implements Listener, BeanPostProcessor, Applic
         } else {
             return bean;
         }
+    }
+
+    @SuppressWarnings("unchecked")
+    private Class<? extends Configuration> getConfigType(Configurable object) {
+        return (Class<? extends Configuration>)GenericTypeReflector.getTypeParameter(object.getClass(), Configurable.class.getTypeParameters()[0]);
     }
 
     private void initConfigs(List<ConfigurationSource> sources) {
