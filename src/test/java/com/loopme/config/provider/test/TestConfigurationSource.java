@@ -8,9 +8,8 @@ import com.loopme.config.api.Configuration;
 import com.loopme.config.provider.source.ConfigurationSource;
 import com.loopme.config.provider.source.Listener;
 
-class TestConfigurationSource<T extends Configuration> implements ConfigurationSource {
+class TestConfigurationSource<T extends Configuration> extends ConfigurationSource {
     private T config;
-    private Listener listener;
 
     public TestConfigurationSource(T config) {
         this.config = config;
@@ -19,11 +18,6 @@ class TestConfigurationSource<T extends Configuration> implements ConfigurationS
     @Override
     public Configuration getCurrent() {
         return config;
-    }
-
-    @Override
-    public void setListener(Listener listener) {
-        this.listener = listener;
     }
 
     public void accept(T config) {
