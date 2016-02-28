@@ -23,28 +23,22 @@ public class ConfigurationManagerTest {
         TestConfigurationSource<ConfigB> sourceB = (TestConfigurationSource<ConfigB>)context.getBean("sourceB");
 
         // initial state
-        assertFalse(configurableA.getOld().isPresent());
-        assertEquals(configAv1, configurableA.getFresh());
-        assertFalse(configurableB.getOld().isPresent());
-        assertEquals(configBv1, configurableB.getFresh());
+        assertEquals(configAv1, configurableA.getConfig());
+        assertEquals(configBv1, configurableB.getConfig());
 
         ConfigA configAv2 = new ConfigA();
         sourceA.accept(configAv2);
 
         // state after new ConfigA arrived
-        assertEquals(configAv1, configurableA.getOld().get());
-        assertEquals(configAv2, configurableA.getFresh());
-        assertFalse(configurableB.getOld().isPresent());
-        assertEquals(configBv1, configurableB.getFresh());
+        assertEquals(configAv2, configurableA.getConfig());
+        assertEquals(configBv1, configurableB.getConfig());
 
         ConfigB configBv2 = new ConfigB();
         sourceB.accept(configBv2);
 
         // state after new ConfigB arrived
-        assertEquals(configAv1, configurableA.getOld().get());
-        assertEquals(configAv2, configurableA.getFresh());
-        assertEquals(configBv1, configurableB.getOld().get());
-        assertEquals(configBv2, configurableB.getFresh());
+        assertEquals(configAv2, configurableA.getConfig());
+        assertEquals(configBv2, configurableB.getConfig());
     }
 
 

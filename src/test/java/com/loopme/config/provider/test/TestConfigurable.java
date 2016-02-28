@@ -10,22 +10,14 @@ import com.loopme.config.api.Configuration;
 import java.util.Optional;
 
 abstract class TestConfigurable<T extends Configuration> implements Configurable<T> {
-    private Optional<T> old;
-    private T fresh;
+    private T config;
 
     @Override
-    public void accept(Optional<T> old, T fresh) {
-        this.old = old;
-        this.fresh = fresh;
+    public void accept(T config) {
+        this.config = config;
     }
 
-
-    public Optional<T> getOld() {
-        return old;
+    public T getConfig() {
+        return config;
     }
-
-    public T getFresh() {
-        return fresh;
-    }
-
 }

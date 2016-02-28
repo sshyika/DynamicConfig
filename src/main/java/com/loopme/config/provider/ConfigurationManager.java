@@ -17,7 +17,7 @@ import java.util.*;
 public class ConfigurationManager implements Listener, BeanPostProcessor, ApplicationContextAware {
 
     private Map<Class<? extends Configuration>, Set<String>> configurables;
-    private Map<Class<? extends Configuration>, Pair<Configuration>> configs;
+    private Map<Class<? extends Configuration>, Configuration> configs;
     private Map<String, HotSwappableTargetSource> swappers;
     private ApplicationContext applicationContext;
 
@@ -33,8 +33,7 @@ public class ConfigurationManager implements Listener, BeanPostProcessor, Applic
     @Override
     public synchronized void onUpdate(Configuration fresh) {
         Class<? extends Configuration> configType = fresh.getClass();
-        Pair<Configuration> config = configs.get(configType);
-        configs.put(configType, new Pair<>(config.fresh, fresh));
+        configs.put(configType, fresh);
         for (String name : configurables.get(configType)) {
             Configurable bean = applicationContext.getBean(name, Configurable.class);
             Object old = swappers.get(name).swap(bean);
@@ -53,11 +52,11 @@ public class ConfigurationManager implements Listener, BeanPostProcessor, Applic
                 configurables.put(configType, dependents);
             }
             dependents.add(name);
-            Pair<Configuration> config = configs.get(configType);
+            Configuration config = configs.get(configType);
             if (config == null) {
                 throw new IllegalStateException("ConfigurationSource for " + configType + " is not found");
             }
-            configurable.accept(config.old, config.fresh);
+            configurable.accept(config);
             return proxy(name, configurable);
         }
         return bean;
@@ -98,18 +97,7 @@ public class ConfigurationManager implements Listener, BeanPostProcessor, Applic
                 throw new IllegalArgumentException("Found more than one ConfigurationSource for " + config.getClass());
             }
             source.setListener(this);
-            configs.put(config.getClass(), new Pair<>(null, config));
-        }
-    }
-
-
-    private class Pair<T> {
-        Optional<T> old;
-        T fresh;
-
-        private Pair(T old, T fresh) {
-            this.old = old == null ? Optional.<T>empty() : Optional.of(old);
-            this.fresh = fresh;
+            configs.put(config.getClass(), config);
         }
     }
 
