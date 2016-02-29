@@ -7,12 +7,12 @@ import com.loopme.config.api.Configuration;
  */
 public abstract class ConfigurationSource<T extends Configuration> {
 
-    protected Listener listener;
+    protected Listener<T> listener;
 
     /**
      * Registers listener which will receive notifications about config updates
      */
-    public void setListener(Listener listener) {
+    public void setListener(Listener<T> listener) {
         this.listener = listener;
     }
 
