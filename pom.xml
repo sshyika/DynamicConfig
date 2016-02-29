@@ -41,11 +41,15 @@
             <artifactId>spring-context</artifactId>
             <version>4.2.5.RELEASE</version>
         </dependency>
+
+        <!-- Reflection utils -->
         <dependency>
             <groupId>com.googlecode.gentyref</groupId>
             <artifactId>gentyref</artifactId>
             <version>1.2.0</version>
         </dependency>
+
+        <!-- Logging -->
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-api</artifactId>

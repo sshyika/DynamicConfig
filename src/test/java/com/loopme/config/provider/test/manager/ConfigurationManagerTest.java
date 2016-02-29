@@ -1,4 +1,4 @@
-package com.loopme.config.provider.test;
+package com.loopme.config.provider.test.manager;
 
 import com.loopme.config.api.Configuration;
 import org.junit.Test;

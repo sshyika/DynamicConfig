@@ -2,7 +2,7 @@
  * Copyright (c) 2015 PE INTERNATIONAL AG.
  * All rights reserved.
  *******************************************************************************/
-package com.loopme.config.provider.test;
+package com.loopme.config.provider.test.manager;
 
 import com.loopme.config.api.Configurable;
 import com.loopme.config.api.Configuration;
