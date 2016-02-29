@@ -11,9 +11,12 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 public class DisposerTest {
     private static volatile int currentValue;
+    private static volatile boolean destroyed = false;
 
     public static class TestConfig implements Configuration {
     }
@@ -23,6 +26,7 @@ public class DisposerTest {
 
         public void destroy() {
             value = Integer.MAX_VALUE;
+            destroyed = true;
         }
 
         @Override
@@ -49,6 +53,8 @@ public class DisposerTest {
         TestConfigurationSource<TestConfig> source = (TestConfigurationSource<TestConfig>)context.getBean("source");
         TestConfigurable configurable = context.getBean(TestConfigurable.class);
 
+        assertFalse(destroyed);
+
         Thread thread = new Thread(configurable::longRunningMethod);
         thread.start();
 
@@ -61,6 +67,12 @@ public class DisposerTest {
         }
 
         assertEquals(Integer.MIN_VALUE, currentValue);
+
+        assertFalse(destroyed);
+
+        Thread.sleep(1000);
+
+        assertTrue(destroyed);
     }
 
 }

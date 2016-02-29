@@ -6,7 +6,7 @@
     <import resource="config/config-context.xml"/>
 
     <bean id="executor" class="org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor">
-        <property name="corePoolSize" value="3"/>
+        <property name="corePoolSize" value="5"/>
     </bean>
 
     <bean class="com.loopme.app.source.PropertyFileConfigSource" init-method="init" destroy-method="destroy">

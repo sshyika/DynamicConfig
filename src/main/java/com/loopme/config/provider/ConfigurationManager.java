@@ -60,7 +60,7 @@ public class ConfigurationManager implements Listener, BeanPostProcessor, Applic
             for (String name : beanNames) {
                 Configurable bean = applicationContext.getBean(name, Configurable.class);
                 Object old = swappers.get(name).swap(bean);
-                disposer.dispose(name, (Configurable)old);
+                disposer.dispose((Configurable)old);
 
                 LOG.debug("Updated {} configurable bean", name);
             }
