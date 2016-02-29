@@ -37,7 +37,7 @@ public class ConfigurationManager implements Listener, BeanPostProcessor, Applic
     /**
      * Initialization callback
      */
-    public void init() {
+    public synchronized void init() {
         initConfigs(applicationContext.getBeansOfType(ConfigurationSource.class).values());
     }
 
@@ -55,12 +55,15 @@ public class ConfigurationManager implements Listener, BeanPostProcessor, Applic
 
         LOG.debug("New version of {} received", configType);
 
-        for (String name : configurables.get(configType)) {
-            Configurable bean = applicationContext.getBean(name, Configurable.class);
-            Object old = swappers.get(name).swap(bean);
-            disposer.dispose(name, (Configurable)old);
+        Set<String> beanNames = configurables.get(configType);
+        if (beanNames != null) {
+            for (String name : beanNames) {
+                Configurable bean = applicationContext.getBean(name, Configurable.class);
+                Object old = swappers.get(name).swap(bean);
+                disposer.dispose(name, (Configurable)old);
 
-            LOG.debug("Updated {} configurable bean", name);
+                LOG.debug("Updated {} configurable bean", name);
+            }
         }
     }
 
@@ -70,7 +73,7 @@ public class ConfigurationManager implements Listener, BeanPostProcessor, Applic
      * wraps it in proxy if not already wrapped
      */
     @Override
-    public Object postProcessAfterInitialization(Object bean, String name) throws BeansException {
+    public synchronized Object postProcessAfterInitialization(Object bean, String name) throws BeansException {
         if (bean instanceof Configurable) {
             Configurable configurable = (Configurable)bean;
             Class<? extends Configuration> configType = ReflectionUtils.getConfigType(configurable);

@@ -12,9 +12,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
 public class ReflectionUtils {
-
     private static final ConcurrentMap<Class<? extends Configurable>, Class<? extends Configuration>> cache = new ConcurrentHashMap<>();
-
 
     /**
      * Returns type parameter (class implementing Configuration class) of given Configurable object
