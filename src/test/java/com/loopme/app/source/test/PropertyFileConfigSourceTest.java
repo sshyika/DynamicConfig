@@ -8,6 +8,7 @@ import com.loopme.app.PropertiesConfig;
 import com.loopme.app.source.PropertyFileConfigSource;
 import com.loopme.config.provider.source.Listener;
 import org.junit.Test;
+import org.springframework.core.task.SimpleAsyncTaskExecutor;
 
 import java.net.URL;
 import java.nio.file.Files;
@@ -32,7 +33,7 @@ public class PropertyFileConfigSourceTest {
 
     @Test
     public void notifications() throws Exception {
-        PropertyFileConfigSource source = new PropertyFileConfigSource(Paths.get(FILE.toURI()).toString());
+        PropertyFileConfigSource source = new PropertyFileConfigSource(Paths.get(FILE.toURI()).toString(), new SimpleAsyncTaskExecutor());
         source.init();
         try {
             CollectingListener listener = new CollectingListener();

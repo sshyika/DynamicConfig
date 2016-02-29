@@ -4,6 +4,7 @@ import com.loopme.app.PropertiesConfig;
 import com.loopme.config.provider.source.ConfigurationSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.core.task.TaskExecutor;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -11,8 +12,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.*;
 import java.util.Properties;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
 /**
  * Configuration source for configuration stored in properties file
@@ -23,13 +22,14 @@ public class PropertyFileConfigSource extends ConfigurationSource<PropertiesConf
     private final String fileName;
     private final String directory;
     private WatchService watcher;
-    private ExecutorService executorService;
+    private TaskExecutor executor;
     private PropertiesConfig current;
 
 
-    public PropertyFileConfigSource(String filePath) throws IOException {
+    public PropertyFileConfigSource(String filePath, TaskExecutor executor) throws IOException {
         this.fileName = Paths.get(filePath).getFileName().toString();
         this.directory = Paths.get(filePath).getParent().toString();
+        this.executor = executor;
     }
 
 
@@ -42,8 +42,7 @@ public class PropertyFileConfigSource extends ConfigurationSource<PropertiesConf
             watcher = FileSystems.getDefault().newWatchService();
             Path dir = Paths.get(directory);
             dir.register(watcher, StandardWatchEventKinds.ENTRY_MODIFY);
-            executorService = Executors.newSingleThreadExecutor();
-            executorService.submit(this::processFileUpdates);
+            executor.execute(this::processFileUpdates);
         } catch (IOException e) {
             throw new RuntimeException("Error watching file " + getFileFullName(), e);
         }
@@ -51,7 +50,6 @@ public class PropertyFileConfigSource extends ConfigurationSource<PropertiesConf
     }
 
     public void destroy() {
-        executorService.shutdown();
         try {
             watcher.close();
         } catch (IOException e) {
@@ -73,7 +71,7 @@ public class PropertyFileConfigSource extends ConfigurationSource<PropertiesConf
             WatchKey key;
             try {
                 key = watcher.take();
-            } catch (InterruptedException ex) {
+            } catch (InterruptedException | ClosedWatchServiceException ex) {
                 break;
             }
 
