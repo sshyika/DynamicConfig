@@ -2,6 +2,8 @@ package com.loopme.app.source;
 
 import com.loopme.app.PropertiesConfig;
 import com.loopme.config.provider.source.ConfigurationSource;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.core.io.Resource;
 
 import java.io.FileInputStream;
@@ -12,13 +14,17 @@ import java.util.Properties;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+/**
+ * Configuration source for configuration stored in properties file
+ */
 public class PropertyFileConfigSource extends ConfigurationSource<PropertiesConfig> {
+    private static final Logger LOG = LoggerFactory.getLogger(PropertyFileConfigSource.class);
 
-    private String fileName;
-    private String directory;
-    private PropertiesConfig current;
+    private final String fileName;
+    private final String directory;
     private WatchService watcher;
     private ExecutorService executorService;
+    private PropertiesConfig current;
 
 
     public PropertyFileConfigSource(String fileName, Resource directory) throws IOException {
@@ -27,18 +33,21 @@ public class PropertyFileConfigSource extends ConfigurationSource<PropertiesConf
     }
 
 
+    /**
+     * Creates WatchService and registers directory with it
+     * Creates task which will poll WatchService
+     */
     public void init() {
         try {
             watcher = FileSystems.getDefault().newWatchService();
             Path dir = Paths.get(directory);
             dir.register(watcher, StandardWatchEventKinds.ENTRY_MODIFY);
             executorService = Executors.newSingleThreadExecutor();
-            executorService.submit(() -> {
-               processFileUpdates();
-            });
+            executorService.submit(this::processFileUpdates);
         } catch (IOException e) {
-            throw new RuntimeException("Error watching file " + directory + System.lineSeparator() + fileName, e);
+            throw new RuntimeException("Error watching file " + getFileFullName(), e);
         }
+        LOG.debug("Start watching updates of {}", getFileFullName());
     }
 
     public void destroy() {
@@ -56,6 +65,9 @@ public class PropertyFileConfigSource extends ConfigurationSource<PropertiesConf
     }
 
 
+    /**
+     * Polls WatchService and for every update of the file of interest loads file content and notifies listener
+     */
     private void processFileUpdates() {
         while (true) {
             WatchKey key;
@@ -73,7 +85,9 @@ public class PropertyFileConfigSource extends ConfigurationSource<PropertiesConf
                 Path file = ev.context();
 
                 if (kind == StandardWatchEventKinds.ENTRY_MODIFY && file.toString().equals(fileName)) {
-                    current = null;
+                    LOG.debug("File {} was updated", getFileFullName());
+
+                    setCurrent(null);
                     if (listener != null) {
                         listener.onUpdate(getConfig());
                     }
@@ -87,16 +101,24 @@ public class PropertyFileConfigSource extends ConfigurationSource<PropertiesConf
         }
     }
 
-    private PropertiesConfig getConfig() {
+    private synchronized PropertiesConfig getConfig() {
         if (current == null) {
             Properties props = new Properties();
             try (InputStream is = new FileInputStream(Paths.get(directory, fileName).toFile())) {
                 props.load(is);
             } catch (Exception e) {
-                throw new RuntimeException("Error reading file " + directory + System.lineSeparator() + fileName, e);
+                throw new RuntimeException("Error reading file " + getFileFullName(), e);
             }
             current = new PropertiesConfig(props);
         }
         return current;
+    }
+
+    private synchronized void setCurrent(PropertiesConfig current) {
+        this.current = current;
+    }
+
+    private String getFileFullName() {
+        return directory + System.lineSeparator() + fileName;
     }
 }

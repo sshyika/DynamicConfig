@@ -4,6 +4,9 @@ import com.loopme.config.api.Configuration;
 
 import java.util.Properties;
 
+/**
+ * Configuration based on Properties
+ */
 public class PropertiesConfig implements Configuration {
 
     private Properties properties;
