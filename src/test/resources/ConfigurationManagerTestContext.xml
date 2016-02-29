@@ -11,11 +11,11 @@
     <bean id="configurableA" class="com.loopme.config.provider.test.manager.ConfigurationManagerTest$ConfigurableA" scope="prototype"/>
     <bean id="configurableB" class="com.loopme.config.provider.test.manager.ConfigurationManagerTest$ConfigurableB" scope="prototype"/>
 
-    <bean id="sourceA" class="com.loopme.config.provider.test.manager.TestConfigurationSource">
+    <bean id="sourceA" class="com.loopme.config.provider.test.TestConfigurationSource">
         <constructor-arg ref="configA"/>
     </bean>
 
-    <bean id="sourceB" class="com.loopme.config.provider.test.manager.TestConfigurationSource">
+    <bean id="sourceB" class="com.loopme.config.provider.test.TestConfigurationSource">
         <constructor-arg ref="configB"/>
     </bean>
 

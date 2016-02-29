@@ -2,12 +2,12 @@
  * Copyright (c) 2015 PE INTERNATIONAL AG.
  * All rights reserved.
  *******************************************************************************/
-package com.loopme.config.provider.test.manager;
+package com.loopme.config.provider.test;
 
 import com.loopme.config.api.Configuration;
 import com.loopme.config.provider.source.ConfigurationSource;
 
-class TestConfigurationSource<T extends Configuration> extends ConfigurationSource {
+public class TestConfigurationSource<T extends Configuration> extends ConfigurationSource {
     private T config;
 
     public TestConfigurationSource(T config) {

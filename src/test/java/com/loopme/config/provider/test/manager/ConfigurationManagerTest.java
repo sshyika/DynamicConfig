@@ -1,6 +1,7 @@
 package com.loopme.config.provider.test.manager;
 
 import com.loopme.config.api.Configuration;
+import com.loopme.config.provider.test.TestConfigurationSource;
 import org.junit.Test;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
