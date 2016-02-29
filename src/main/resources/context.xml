@@ -14,4 +14,22 @@
         <constructor-arg ref="executor"/>
     </bean>
 
+    <bean id="foo" class="com.loopme.app.Service" scope="prototype">
+        <constructor-arg value="foo"/>
+    </bean>
+
+    <bean id="bar" class="com.loopme.app.Service" scope="prototype">
+        <constructor-arg value="bar"/>
+    </bean>
+
+    <bean class="com.loopme.app.Client" init-method="init" destroy-method="destroy" lazy-init="false">
+        <constructor-arg>
+            <list>
+                <ref bean="foo"/>
+                <ref bean="bar"/>
+            </list>
+        </constructor-arg>
+        <constructor-arg ref="executor"/>
+    </bean>
+
 </beans>
