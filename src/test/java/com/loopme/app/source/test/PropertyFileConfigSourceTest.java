@@ -8,8 +8,8 @@ import com.loopme.app.PropertiesConfig;
 import com.loopme.app.source.PropertyFileConfigSource;
 import com.loopme.config.provider.source.Listener;
 import org.junit.Test;
-import org.springframework.core.io.ClassPathResource;
 
+import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
@@ -18,7 +18,7 @@ import java.util.Arrays;
 import static org.junit.Assert.assertEquals;
 
 public class PropertyFileConfigSourceTest {
-    private static final String FILE = "test.properties";
+    private final URL FILE = this.getClass().getClassLoader().getResource("test.properties");
 
     private class CollectingListener implements Listener<PropertiesConfig> {
         PropertiesConfig config;
@@ -32,7 +32,7 @@ public class PropertyFileConfigSourceTest {
 
     @Test
     public void notifications() throws Exception {
-        PropertyFileConfigSource source = new PropertyFileConfigSource(FILE, new ClassPathResource(""));
+        PropertyFileConfigSource source = new PropertyFileConfigSource(Paths.get(FILE.toURI()).toString());
         source.init();
         try {
             CollectingListener listener = new CollectingListener();
@@ -53,7 +53,7 @@ public class PropertyFileConfigSourceTest {
 
     private void writeToFile(String line) throws Exception {
         Files.write(
-                Paths.get(this.getClass().getClassLoader().getResource(FILE).toURI()),
+                Paths.get(FILE.toURI()),
                 Arrays.asList(line),
                 StandardOpenOption.WRITE
         );

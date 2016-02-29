@@ -4,8 +4,8 @@ import com.loopme.app.PropertiesConfig;
 import com.loopme.config.provider.source.ConfigurationSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.core.io.Resource;
 
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -27,9 +27,9 @@ public class PropertyFileConfigSource extends ConfigurationSource<PropertiesConf
     private PropertiesConfig current;
 
 
-    public PropertyFileConfigSource(String fileName, Resource directory) throws IOException {
-        this.fileName = fileName;
-        this.directory = directory.getFile().getAbsolutePath();
+    public PropertyFileConfigSource(String filePath) throws IOException {
+        this.fileName = Paths.get(filePath).getFileName().toString();
+        this.directory = Paths.get(filePath).getParent().toString();
     }
 
 
@@ -119,6 +119,6 @@ public class PropertyFileConfigSource extends ConfigurationSource<PropertiesConf
     }
 
     private String getFileFullName() {
-        return directory + System.lineSeparator() + fileName;
+        return directory + File.separator + fileName;
     }
 }
