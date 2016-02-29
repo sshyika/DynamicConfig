@@ -6,7 +6,7 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 public class App {
 
     public static void main(String[] args) throws Exception {
-        System.setProperty("filePath", args.length > 0 ? args[0] : "");
+        System.setProperty("FILE_PATH", args.length > 0 ? args[0] : "");
         AbstractApplicationContext context = new ClassPathXmlApplicationContext("context.xml");
         context.registerShutdownHook();
     }

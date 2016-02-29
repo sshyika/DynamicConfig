@@ -10,7 +10,7 @@
     </bean>
 
     <bean class="com.loopme.app.source.PropertyFileConfigSource" init-method="init" destroy-method="destroy">
-        <constructor-arg value="#{systemProperties['filePath']}"/>
+        <constructor-arg value="#{systemProperties['FILE_PATH']}"/>
         <constructor-arg ref="executor"/>
     </bean>
 
