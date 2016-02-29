@@ -20,6 +20,15 @@ import static org.junit.Assert.assertEquals;
 public class PropertyFileConfigSourceTest {
     private static final String FILE = "test.properties";
 
+    private class CollectingListener implements Listener<PropertiesConfig> {
+        PropertiesConfig config;
+
+        @Override
+        public void onUpdate(PropertiesConfig fresh) {
+            config = fresh;
+        }
+    }
+
 
     @Test
     public void notifications() throws Exception {
@@ -50,13 +59,5 @@ public class PropertyFileConfigSourceTest {
         );
     }
 
-    private class CollectingListener implements Listener<PropertiesConfig> {
-        PropertiesConfig config;
-
-        @Override
-        public void onUpdate(PropertiesConfig fresh) {
-            config = fresh;
-        }
-    }
 
 }
