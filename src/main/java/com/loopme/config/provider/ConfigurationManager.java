@@ -77,19 +77,22 @@ public class ConfigurationManager implements Listener, BeanPostProcessor, Applic
         if (bean instanceof Configurable) {
             Configurable configurable = (Configurable)bean;
             Class<? extends Configuration> configType = ReflectionUtils.getConfigType(configurable);
+
             Set<String> dependents = configurables.get(configType);
             if (dependents == null) {
                 dependents = new HashSet<>();
                 configurables.put(configType, dependents);
             }
             dependents.add(name);
+            
             Configuration config = configs.get(configType);
             if (config == null) {
                 throw new IllegalStateException("ConfigurationSource for " + configType + " is not found");
             }
+            configurable.accept(config);
+
             LOG.debug("Detected configurable bean {} depending on {}", name, config.getClass());
 
-            configurable.accept(config);
             return proxy(name, configurable);
         }
         return bean;

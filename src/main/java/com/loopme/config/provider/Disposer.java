@@ -41,6 +41,7 @@ public class Disposer implements ApplicationContextAware {
             context.getBeanFactory().destroyBean(name, bean);
 
             LOG.debug("Configurable {} of type {} is disposed", name, bean.getClass());
+
         }, disposeTimeout, TimeUnit.MILLISECONDS);
     }
 
