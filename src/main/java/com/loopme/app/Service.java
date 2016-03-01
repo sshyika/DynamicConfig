@@ -6,6 +6,9 @@ package com.loopme.app;
 
 import com.loopme.config.api.Configurable;
 
+/**
+ * Keeps specific property value from PropertiesConfig
+ */
 public class Service implements Configurable<PropertiesConfig> {
     private String propertyName;
     private String propertyValue;

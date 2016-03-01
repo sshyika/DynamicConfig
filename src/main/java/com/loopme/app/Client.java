@@ -10,6 +10,9 @@ import org.springframework.core.task.TaskExecutor;
 
 import java.util.List;
 
+/**
+ * Periodically calls provided services for current value and logs it
+ */
 public class Client {
     private static final Logger LOG = LoggerFactory.getLogger(Client.class);
 
