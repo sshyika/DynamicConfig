@@ -84,7 +84,7 @@ public class ConfigurationManager implements Listener, BeanPostProcessor, Applic
                 configurables.put(configType, dependents);
             }
             dependents.add(name);
-            
+
             Configuration config = configs.get(configType);
             if (config == null) {
                 throw new IllegalStateException("ConfigurationSource for " + configType + " is not found");
