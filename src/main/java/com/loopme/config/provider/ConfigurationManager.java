@@ -2,8 +2,8 @@ package com.loopme.config.provider;
 
 import com.loopme.config.api.Configurable;
 import com.loopme.config.api.Configuration;
-import com.loopme.config.provider.source.ConfigurationSource;
-import com.loopme.config.provider.source.Listener;
+import com.loopme.config.api.source.ConfigurationSource;
+import com.loopme.config.api.source.Listener;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.aop.framework.ProxyFactory;
@@ -44,9 +44,9 @@ public class ConfigurationManager implements Listener, BeanPostProcessor, Applic
     /**
      * When new version of configuration received updates it in cache,
      * retrieves all configurables depending on configuration and for each configurable:
-     *  - asks application context to create new instance of bean
-     *  - swaps old bean by new, from this moment calls to configurable will be directed to new instance
-     *  - send old instance of configurable to disposer
+     * - asks application context to create new instance of bean
+     * - swaps old bean by new, from this moment calls to configurable will be directed to new instance
+     * - send old instance of configurable to disposer
      */
     @Override
     public synchronized void onUpdate(Configuration fresh) {
@@ -60,7 +60,7 @@ public class ConfigurationManager implements Listener, BeanPostProcessor, Applic
             for (String name : beanNames) {
                 Configurable bean = applicationContext.getBean(name, Configurable.class);
                 Object old = swappers.get(name).swap(bean);
-                disposer.dispose((Configurable)old);
+                disposer.dispose(name, (Configurable)old);
 
                 LOG.debug("Updated {} configurable bean", name);
             }

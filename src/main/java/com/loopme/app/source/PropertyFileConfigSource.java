@@ -1,7 +1,7 @@
 package com.loopme.app.source;
 
 import com.loopme.app.PropertiesConfig;
-import com.loopme.config.provider.source.ConfigurationSource;
+import com.loopme.config.api.source.ConfigurationSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.task.TaskExecutor;
@@ -79,7 +79,7 @@ public class PropertyFileConfigSource extends ConfigurationSource<PropertiesConf
                 WatchEvent.Kind<?> kind = event.kind();
 
                 @SuppressWarnings("unchecked")
-                WatchEvent<Path> ev = (WatchEvent<Path>) event;
+                WatchEvent<Path> ev = (WatchEvent<Path>)event;
                 Path file = ev.context();
 
                 if (kind == StandardWatchEventKinds.ENTRY_MODIFY && file.toString().equals(fileName)) {

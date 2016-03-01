@@ -22,7 +22,7 @@ public class ReflectionUtils {
     public static Class<? extends Configuration> getConfigType(Configurable object) {
         Class<? extends Configuration> configClass = cache.get(object.getClass());
         if (configClass == null) {
-            configClass = (Class<? extends Configuration>) GenericTypeReflector.getTypeParameter(object.getClass(), Configurable.class.getTypeParameters()[0]);
+            configClass = (Class<? extends Configuration>)GenericTypeReflector.getTypeParameter(object.getClass(), Configurable.class.getTypeParameters()[0]);
             cache.put(object.getClass(), configClass);
         }
         return configClass;

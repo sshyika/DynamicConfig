@@ -5,7 +5,7 @@
 package com.loopme.config.provider.test;
 
 import com.loopme.config.api.Configuration;
-import com.loopme.config.provider.source.ConfigurationSource;
+import com.loopme.config.api.source.ConfigurationSource;
 
 public class TestConfigurationSource<T extends Configuration> extends ConfigurationSource {
     private T config;

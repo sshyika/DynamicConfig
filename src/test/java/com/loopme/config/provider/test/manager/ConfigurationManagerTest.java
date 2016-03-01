@@ -1,6 +1,7 @@
 package com.loopme.config.provider.test.manager;
 
 import com.loopme.config.api.Configuration;
+import com.loopme.config.provider.Disposer;
 import com.loopme.config.provider.test.TestConfigurationSource;
 import org.junit.Test;
 import org.springframework.context.ApplicationContext;
@@ -25,8 +26,10 @@ public class ConfigurationManagerTest {
 
 
     @Test
-    public void configurablesStateUpdates() {
+    public void configurablesStateUpdates() throws Exception {
         ApplicationContext context = new ClassPathXmlApplicationContext("ConfigurationManagerTestContext.xml");
+
+        context.getBean(Disposer.class).setDisposeTimeout(0);
 
         ConfigA configAv1 = context.getBean(ConfigA.class);
         ConfigB configBv1 = context.getBean(ConfigB.class);
@@ -47,6 +50,8 @@ public class ConfigurationManagerTest {
         ConfigA configAv2 = new ConfigA();
         sourceA.accept(configAv2);
 
+        Thread.sleep(10);
+
         // assert state after new ConfigA arrived
         assertEquals(configAv2, configurableA.getConfig());
         assertEquals(configBv1, configurableB.getConfig());
@@ -55,6 +60,8 @@ public class ConfigurationManagerTest {
 
         ConfigB configBv2 = new ConfigB();
         sourceB.accept(configBv2);
+
+        Thread.sleep(10);
 
         // assert state after new ConfigB arrived
         assertEquals(configAv2, configurableA.getConfig());

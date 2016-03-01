@@ -1,4 +1,4 @@
-package com.loopme.config.provider.source;
+package com.loopme.config.api.source;
 
 import com.loopme.config.api.Configuration;
 

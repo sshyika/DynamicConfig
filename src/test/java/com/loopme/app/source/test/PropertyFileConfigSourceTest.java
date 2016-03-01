@@ -6,7 +6,7 @@ package com.loopme.app.source.test;
 
 import com.loopme.app.PropertiesConfig;
 import com.loopme.app.source.PropertyFileConfigSource;
-import com.loopme.config.provider.source.Listener;
+import com.loopme.config.api.source.Listener;
 import org.junit.Test;
 import org.springframework.core.task.SimpleAsyncTaskExecutor;
 

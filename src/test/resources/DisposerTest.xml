@@ -5,7 +5,8 @@
 
     <import resource="config/config-context.xml"/>
 
-    <bean id="configurable" class="com.loopme.config.provider.test.DisposerTest$TestConfigurable" scope="prototype" destroy-method="destroy"/>
+    <bean id="configurable" class="com.loopme.config.provider.test.DisposerTest$TestConfigurable" scope="prototype"
+          destroy-method="destroy"/>
 
     <bean id="source" class="com.loopme.config.provider.test.TestConfigurationSource">
         <constructor-arg>

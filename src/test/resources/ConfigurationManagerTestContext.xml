@@ -8,8 +8,10 @@
     <bean id="configA" class="com.loopme.config.provider.test.manager.ConfigurationManagerTest$ConfigA"/>
     <bean id="configB" class="com.loopme.config.provider.test.manager.ConfigurationManagerTest$ConfigB"/>
 
-    <bean id="configurableA" class="com.loopme.config.provider.test.manager.ConfigurationManagerTest$ConfigurableA" scope="prototype"/>
-    <bean id="configurableB" class="com.loopme.config.provider.test.manager.ConfigurationManagerTest$ConfigurableB" scope="prototype"/>
+    <bean id="configurableA" class="com.loopme.config.provider.test.manager.ConfigurationManagerTest$ConfigurableA"
+          scope="prototype"/>
+    <bean id="configurableB" class="com.loopme.config.provider.test.manager.ConfigurationManagerTest$ConfigurableB"
+          scope="prototype"/>
 
     <bean id="sourceA" class="com.loopme.config.provider.test.TestConfigurationSource">
         <constructor-arg ref="configA"/>
